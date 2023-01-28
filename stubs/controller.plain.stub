@@ -1,0 +1,64 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ rootNamespace }}Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class {{ class }} extends Controller
+{
+    protected $sample_service;
+    public function __construct(SampleService $sample_service)
+    {
+        $this->sample_service = $sample_service;
+    }
+
+    public function index()
+    {
+        checkPermission('Add Page');
+        setPageMeta('Sample');
+
+        $samples = $this->sample_service->get();
+
+        return view('view', compact('samples'));
+    }
+
+    public function store(Request $request) // Use Request class
+    {
+        try {
+            $this->sample_service->updateOrCreate($request->all());
+
+            sendFlash('Successful');
+            return back();
+        } catch (\Exception $e) {
+            sendFlash($e->getMessage(), 'error');
+            return back();
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $this->sample_service->updateOrCreate($request->all(), $id);
+
+            sendFlash('Successful');
+            return back();
+        } catch (\Exception $e) {
+            sendFlash($e->getMessage(), 'error');
+            return back();
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $this->sample_service->delete($id);
+
+            sendFlash('Successful');
+            return back();
+        } catch (\Exception $e) {
+            sendFlash($e->getMessage(), 'error');
+            return back();
+        }
+    }
+}
